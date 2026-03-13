@@ -1,6 +1,7 @@
-
- import { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
+
+const API = process.env.REACT_APP_API_URL;
 
 function SearchRides() {
 
@@ -13,7 +14,7 @@ function SearchRides() {
     try {
 
       const res = await axios.get(
-        `https://ride-sharing-app.onrender.com/api/rides/search?from=${from}&to=${to}`
+        `${API}/api/rides/search?from=${from}&to=${to}`
       );
 
       setRides(res.data);
@@ -28,7 +29,7 @@ function SearchRides() {
     try {
 
       const res = await axios.post(
-        `https://ride-sharing-app.onrender.com/api/rides/${rideId}/join`
+        `${API}/api/rides/${rideId}/join`
       );
 
       alert(res.data.message);
@@ -50,12 +51,14 @@ function SearchRides() {
       <input
         type="text"
         placeholder="From"
+        value={from}
         onChange={(e) => setFrom(e.target.value)}
       />
 
       <input
         type="text"
         placeholder="To"
+        value={to}
         onChange={(e) => setTo(e.target.value)}
       />
 
@@ -65,7 +68,10 @@ function SearchRides() {
 
       {rides.length > 0 ? (
         rides.map((ride) => (
-          <div key={ride._id} style={{border:"1px solid gray", margin:"10px", padding:"10px"}}>
+          <div
+            key={ride._id}
+            style={{ border: "1px solid gray", margin: "10px", padding: "10px" }}
+          >
 
             <p><b>{ride.from} → {ride.to}</b></p>
             <p>Date: {ride.date}</p>
@@ -73,12 +79,12 @@ function SearchRides() {
             <p>Price: ₹{ride.price}</p>
 
             {ride.seatsAvailable === 0 ? (
-  <button disabled>Ride Full</button>
-) : (
-  <button onClick={() => joinRide(ride._id)}>
-    Join Ride
-  </button>
-)}
+              <button disabled>Ride Full</button>
+            ) : (
+              <button onClick={() => joinRide(ride._id)}>
+                Join Ride
+              </button>
+            )}
 
           </div>
         ))
@@ -89,6 +95,8 @@ function SearchRides() {
     </div>
   );
 }
+
+export default SearchRides;
 
 export default SearchRides;
 
