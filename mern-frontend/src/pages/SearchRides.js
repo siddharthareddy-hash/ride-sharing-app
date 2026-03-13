@@ -95,6 +95,5 @@ function SearchRides() {
 
 export default SearchRides;
 
-export default SearchRides;
 
 
