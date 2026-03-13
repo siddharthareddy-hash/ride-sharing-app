@@ -34,7 +34,6 @@ function SearchRides() {
 
       alert(res.data.message);
 
-      // refresh rides
       handleSearch();
 
     } catch (err) {
@@ -72,7 +71,6 @@ function SearchRides() {
             key={ride._id}
             style={{ border: "1px solid gray", margin: "10px", padding: "10px" }}
           >
-
             <p><b>{ride.from} → {ride.to}</b></p>
             <p>Date: {ride.date}</p>
             <p>Seats Available: {ride.seatsAvailable}</p>
@@ -85,7 +83,6 @@ function SearchRides() {
                 Join Ride
               </button>
             )}
-
           </div>
         ))
       ) : (
