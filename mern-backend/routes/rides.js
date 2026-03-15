@@ -2,11 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Ride = require("../models/Ride");
 
-
 // CREATE RIDE
 router.post("/create", async (req, res) => {
   try {
-
     const { from, to, date, seatsAvailable, price } = req.body;
 
     const ride = new Ride({
@@ -30,15 +28,25 @@ router.post("/create", async (req, res) => {
 });
 
 
+// GET ALL RIDES
+router.get("/", async (req, res) => {
+  try {
+    const rides = await Ride.find();
+    res.json(rides);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 // SEARCH RIDES
 router.get("/search", async (req, res) => {
   try {
-
     const { from, to } = req.query;
 
     const rides = await Ride.find({
-      from: new RegExp(from, "i"),
-      to: new RegExp(to, "i")
+      from,
+      to
     });
 
     res.json(rides);
@@ -70,69 +78,6 @@ router.post("/:rideId/join", async (req, res) => {
     res.json({ message: "Successfully joined ride" });
 
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-
-// GET ALL RIDES
-router.get("/", async (req, res) => {
-  try {
-    const rides = await Ride.find();
-    res.json(rides);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-
-// GET RIDES CREATED BY USER
-router.get("/my-created/:userId", async (req, res) => {
-  try {
-
-    const rides = await Ride.find({
-      driver: req.params.userId
-    });
-
-    res.json(rides);
-
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-
-// GET RIDES JOINED BY USER
-router.get("/my-joined/:userId", async (req, res) => {
-  try {
-
-    const rides = await Ride.find({
-      passengers: req.params.userId
-    });
-
-    res.json(rides);
-
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-
-// GET PASSENGERS OF A RIDE
-router.get("/:rideId/passengers", async (req, res) => {
-  try {
-
-    const ride = await Ride.findById(req.params.rideId)
-      .populate("passengers");
-
-    if (!ride) {
-      return res.status(404).json({ message: "Ride not found" });
-    }
-
-    res.json(ride.passengers);
-
-  } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Server error" });
   }
 });
