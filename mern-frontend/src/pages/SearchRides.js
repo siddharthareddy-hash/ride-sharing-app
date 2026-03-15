@@ -72,7 +72,7 @@ function SearchRides() {
             style={{ border: "1px solid gray", margin: "10px", padding: "10px" }}
           >
             <p><b>{ride.from} → {ride.to}</b></p>
-            <p>Date: {ride.date}</p>
+          <p>Date: {new Date(ride.date).toLocaleString()}</p>
             <p>Seats Available: {ride.seatsAvailable}</p>
             <p>Price: ₹{ride.price}</p>
 
