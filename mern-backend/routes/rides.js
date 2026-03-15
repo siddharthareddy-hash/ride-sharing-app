@@ -48,7 +48,6 @@ router.get("/search", async (req, res) => {
 });
 
 //JOIN RIDES
-
 router.post("/:rideId/join", async (req, res) => {
   try {
 
@@ -58,37 +57,17 @@ router.post("/:rideId/join", async (req, res) => {
       return res.status(404).json({ message: "Ride not found" });
     }
 
-    const userId = "69a93a9bf0c2ebf62eb5911b"; // temporary user
-
-    // check if already joined
-    if (ride.passengers.includes(userId)) {
-      return res.status(400).json({ message: "You already joined this ride" });
+    if (ride.seatsAvailable <= 0) {
+      return res.status(400).json({ message: "Ride full" });
     }
 
-    const seats = ride.seatsAvailable ?? ride.seats;
-
-    if (seats <= 0) {
-      return res.status(400).json({ message: "Ride is full" });
-    }
-
-    // reduce seats
-    if (ride.seatsAvailable !== undefined) {
-      ride.seatsAvailable -= 1;
-    } else {
-      ride.seats -= 1;
-    }
-
-    ride.passengers.push(userId);
+    ride.seatsAvailable -= 1;
 
     await ride.save();
 
-    res.json({
-      message: "Ride joined successfully",
-      ride
-    });
+    res.json({ message: "Successfully joined ride" });
 
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });
