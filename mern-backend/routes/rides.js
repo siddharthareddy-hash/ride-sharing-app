@@ -30,23 +30,27 @@ router.post("/create", async (req, res) => {
 
 
 // SEARCH RIDES
-router.get("/search", async (req, res) => {
+const handleSearch = async () => {
+
+  if (!from || !to) {
+    alert("Please enter both From and To locations");
+    return;
+  }
+
   try {
 
-    const { from, to } = req.query;
+    const res = await axios.get(
+      `${API}/api/rides/search?from=${from}&to=${to}`
+    );
 
-    const rides = await Ride.find({
-      from: { $regex: from, $options: "i" },
-      to: { $regex: to, $options: "i" }
-    });
+    setRides(res.data);
+    setSearched(true);
 
-    res.json(rides);
-
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
+  } catch (err) {
+    console.error(err);
+    alert("Error fetching rides");
   }
-});
-
+};
 //JOIN RIDES
 router.post("/:rideId/join", async (req, res) => {
   try {
