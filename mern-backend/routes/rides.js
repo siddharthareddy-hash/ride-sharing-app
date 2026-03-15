@@ -2,17 +2,18 @@ const express = require("express");
 const router = express.Router();
 const Ride = require("../models/Ride");
 
+
 // CREATE RIDE
 router.post("/create", async (req, res) => {
   try {
 
-    const { from, to, date, seats, price } = req.body;
+    const { from, to, date, seatsAvailable, price } = req.body;
 
     const ride = new Ride({
       from,
       to,
       date,
-      seats,
+      seatsAvailable,
       price
     });
 
@@ -30,28 +31,25 @@ router.post("/create", async (req, res) => {
 
 
 // SEARCH RIDES
-const handleSearch = async () => {
-
-  if (!from || !to) {
-    alert("Please enter both From and To locations");
-    return;
-  }
-
+router.get("/search", async (req, res) => {
   try {
 
-    const res = await axios.get(
-      `${API}/api/rides/search?from=${from}&to=${to}`
-    );
+    const { from, to } = req.query;
 
-    setRides(res.data);
-    setSearched(true);
+    const rides = await Ride.find({
+      from: new RegExp(from, "i"),
+      to: new RegExp(to, "i")
+    });
 
-  } catch (err) {
-    console.error(err);
-    alert("Error fetching rides");
+    res.json(rides);
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
   }
-};
-//JOIN RIDES
+});
+
+
+// JOIN RIDE
 router.post("/:rideId/join", async (req, res) => {
   try {
 
@@ -75,7 +73,9 @@ router.post("/:rideId/join", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-// GET ALL RIDES (test)
+
+
+// GET ALL RIDES
 router.get("/", async (req, res) => {
   try {
     const rides = await Ride.find();
@@ -84,6 +84,8 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
 // GET RIDES CREATED BY USER
 router.get("/my-created/:userId", async (req, res) => {
   try {
@@ -114,6 +116,7 @@ router.get("/my-joined/:userId", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 // GET PASSENGERS OF A RIDE
 router.get("/:rideId/passengers", async (req, res) => {
